@@ -1,18 +1,54 @@
-FROM debian:jessie
+FROM debian:stretch
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates \
-		libdatetime-perl \
-		libglib2.0-0 \
-		libwww-perl \
-		perl \
-		wget \
+    build-essential \
+    ca-certificates \
+    libdatetime-perl \
+    libglib2.0-0 \
+    libwww-perl \
+    git \
+    neovim \
+    perl \
+    tmux \
+    wget \
+    zsh \
+    curl \
+    python \
+    python3 \
+    perl \
+    gnupg2 \
+    gtk+3.0 \
+    libwebkit2gtk-3.0 \
+    webkitgtk+2 \
+    webkitgtk+3.0 \
+    libwebkitgtk-dev \
+    libwebkitgtk-3.0-dev \
+    sudo \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV HOME /home/user
 RUN useradd --create-home --home-dir $HOME user \
 	&& mkdir -p $HOME/.irssi \
-	&& chown -R user:user $HOME
+	&& chown -R user:user $HOME \
+    && mkdir -p /home/user/.emacs.d
+
+RUN su - && adduser user sudo
+
+RUN cd /home/user \
+    && wget ftp://ftp.gnu.org/pub/gnu/emacs/emacs-25.2.tar.gz \
+    && tar -xf emacs-25.2.tar.gz \ 
+    && cd /home/user/emacs-25.2/ \
+    && sudo apt-get build-dep -y emacs25 \ 
+    && sudo ./configure --with-cairo --with-xwidgets --with-x-toolkit=gtk3 \
+    && sudo make \
+    && sudo make install
+
+RUN mkdir /home/vagrant/.config \
+    && sudo chown -R vagrant /home/vagrant/.config \
+    && curl -sLf https://spacevim.org/install.sh > /home/user/install.sh \
+    && sudo chown user install.sh \
+    && sudo chmod +x install.sh \
+    && runuser -l vagrant -c 'sh /home/user/install.sh'
 
 ENV LANG C.UTF-8
 
