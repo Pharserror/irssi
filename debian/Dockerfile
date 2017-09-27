@@ -1,4 +1,4 @@
-FROM debian:jessie
+FROM debian:stretch
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates \
@@ -23,6 +23,7 @@ RUN buildDeps=' \
 		automake \
 		bzip2 \
 		dpkg-dev \
+        gnupg \
 		libglib2.0-dev \
 		libncurses-dev \
 		libperl-dev \
@@ -30,6 +31,7 @@ RUN buildDeps=' \
 		libtool \
 		lynx \
 		make \
+        neovim \
 		pkg-config \
 		xz-utils \
 	' \
@@ -62,4 +64,4 @@ RUN buildDeps=' \
 WORKDIR $HOME
 
 USER user
-CMD ["irssi"]
+CMD ["nvim"]
