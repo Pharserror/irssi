@@ -17,13 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     perl \
     gnupg2 \
-    gtk+3.0 \
-    libwebkit2gtk-3.0 \
-    webkitgtk+2 \
-    webkitgtk+3.0 \
-    libwebkitgtk-dev \
-    libwebkitgtk-3.0-dev \
-    sudo \
+    emacs25 \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV HOME /home/user
@@ -32,23 +26,18 @@ RUN useradd --create-home --home-dir $HOME user \
 	&& chown -R user:user $HOME \
     && mkdir -p /home/user/.emacs.d
 
-RUN su - && adduser user sudo
+RUN git clone https://github.com/syl20bnr/spacemacs /home/user/.emacs.d \
+    && chown -R user /home/user/.emacs.d \
+    && mkdir /home/user/.emacs.d/.cache \
+    && chown -R user /home/user/.emacs.d/.cache
 
-RUN cd /home/user \
-    && wget ftp://ftp.gnu.org/pub/gnu/emacs/emacs-25.2.tar.gz \
-    && tar -xf emacs-25.2.tar.gz \ 
-    && cd /home/user/emacs-25.2/ \
-    && sudo apt-get build-dep -y emacs25 \ 
-    && sudo ./configure --with-cairo --with-xwidgets --with-x-toolkit=gtk3 \
-    && sudo make \
-    && sudo make install
-
-RUN mkdir /home/vagrant/.config \
-    && sudo chown -R vagrant /home/vagrant/.config \
+RUN mkdir /home/user/.config \
+    && chown -R user /home/user/.config \
     && curl -sLf https://spacevim.org/install.sh > /home/user/install.sh \
-    && sudo chown user install.sh \
-    && sudo chmod +x install.sh \
-    && runuser -l vagrant -c 'sh /home/user/install.sh'
+    && chown user /home/user/install.sh \
+    && chmod +x /home/user/install.sh
+
+RUN runuser -l user -c 'sh /home/user/install.sh'
 
 ENV LANG C.UTF-8
 
