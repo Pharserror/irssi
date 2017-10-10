@@ -44,8 +44,6 @@ RUN git clone https://github.com/syl20bnr/spacemacs /home/user/.emacs.d \
     && mkdir /home/user/.emacs.d/.cache \
     && chown -R user /home/user/.emacs.d/.cache
 
-RUN runuser -l user -c 'sh /home/user/install.sh'
-
 WORKDIR $HOME
 
 USER user
